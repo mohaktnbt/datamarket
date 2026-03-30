@@ -1,0 +1,12 @@
+{
+  "name": "@dataforge/format-converter",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Format conversion: COCO, YOLO, Pascal VOC, KITTI, WebDataset, HuggingFace",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "echo 'placeholder'",
+    "lint": "echo 'placeholder'",
+    "test": "echo 'placeholder'"
+  }
+}

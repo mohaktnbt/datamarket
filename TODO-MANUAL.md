@@ -8,26 +8,28 @@
 ## PHASE 0: Foundation (Weeks 1-4)
 
 ### P0-1: Monorepo Setup [AGENT-01]
-- [ ] Initialize git repo: `mohaktnbt/dataforge`
-- [ ] Configure Turborepo with pnpm workspaces
-- [ ] Create workspace structure: `apps/web`, `apps/api`, `apps/mobile`, `services/upload`, `services/ml-pipeline`, `services/transcoding`, `services/matching`, `services/pricing`, `packages/shared`, `packages/db`, `packages/ui`, `packages/ml`, `oss/`, `infrastructure/`, `docs/`
-- [ ] Configure root `tsconfig.json` with strict mode, path aliases
-- [ ] Configure ESLint (extends `@typescript-eslint/recommended`)
-- [ ] Configure Prettier (printWidth: 100, singleQuote: true, trailingComma: all)
-- [ ] Configure Husky pre-commit hooks (lint-staged)
-- [ ] Create `.env.example` with all environment variables documented
-- [ ] Create root `docker-compose.yml`:
-  - [ ] PostgreSQL 16 (port 5432)
-  - [ ] MongoDB 7 (port 27017)
-  - [ ] Redis 7 (port 6379)
-  - [ ] Kafka KRaft (port 9092)
-  - [ ] MinIO (port 9000, S3-compatible)
-  - [ ] OpenSearch (port 9200)
-- [ ] Verify `turbo run build` works across all workspaces
-- [ ] Verify `turbo run lint` works across all workspaces
-- [ ] Verify `turbo run test` works (even if tests are empty stubs)
+
+- [x] Initialize git repo: `mohaktnbt/dataforge`
+- [x] Configure Turborepo with pnpm workspaces
+- [x] Create workspace structure: `apps/web`, `apps/api`, `apps/mobile`, `services/upload`, `services/ml-pipeline`, `services/transcoding`, `services/matching`, `services/pricing`, `packages/shared`, `packages/db`, `packages/ui`, `packages/ml`, `oss/`, `infrastructure/`, `docs/`
+- [x] Configure root `tsconfig.json` with strict mode, path aliases
+- [x] Configure ESLint (extends `@typescript-eslint/recommended`)
+- [x] Configure Prettier (printWidth: 100, singleQuote: true, trailingComma: all)
+- [x] Configure Husky pre-commit hooks (lint-staged)
+- [x] Create `.env.example` with all environment variables documented
+- [x] Create root `docker-compose.yml`:
+  - [x] PostgreSQL 16 (port 5432)
+  - [x] MongoDB 7 (port 27017)
+  - [x] Redis 7 (port 6379)
+  - [x] Kafka KRaft (port 9092)
+  - [x] MinIO (port 9000, S3-compatible)
+  - [x] OpenSearch (port 9200)
+- [x] Verify `turbo run build` works across all workspaces
+- [x] Verify `turbo run lint` works across all workspaces
+- [x] Verify `turbo run test` works (even if tests are empty stubs)
 
 ### P0-2: Infrastructure as Code [AGENT-01]
+
 - [ ] Create Terraform module: AWS VPC (public/private subnets, NAT gateway)
 - [ ] Create Terraform module: EKS cluster (managed node groups, GPU node pool)
 - [ ] Create Terraform module: RDS PostgreSQL 16 (Multi-AZ, encryption at rest)
@@ -41,9 +43,10 @@
 - [ ] Verify `terraform plan` is clean for dev environment
 
 ### P0-3: Next.js App Foundation [AGENT-03]
-- [ ] Initialize Next.js 15 with App Router in `apps/web/`
-- [ ] Configure TypeScript strict mode
-- [ ] Install and configure Tailwind CSS v4
+
+- [x] Initialize Next.js 15 with App Router in `apps/web/`
+- [x] Configure TypeScript strict mode
+- [x] Install and configure Tailwind CSS v4
 - [ ] Install Radix UI primitives (or shadcn/ui components)
 - [ ] Set up Storybook 8 for component development
 - [ ] Create design tokens: colors, spacing, typography, shadows
@@ -55,7 +58,8 @@
 - [ ] Verify responsive design at mobile/tablet/desktop breakpoints
 
 ### P0-4: CI/CD Pipelines [AGENT-01]
-- [ ] GitHub Actions workflow: `ci.yml` — lint, typecheck, test on every PR
+
+- [x] GitHub Actions workflow: `ci.yml` — lint, typecheck, test on every PR
 - [ ] GitHub Actions workflow: `cd-staging.yml` — build + deploy on merge to `develop`
 - [ ] GitHub Actions workflow: `cd-production.yml` — blue-green deploy on merge to `main`
 - [ ] Docker build for each service (multi-stage, minimal images)
@@ -67,6 +71,7 @@
 ## PHASE 1: MVP Core (Weeks 5-12)
 
 ### P1-1: Authentication System [AGENT-02]
+
 - [ ] JWT access token (15min expiry) + refresh token (7day, rotation)
 - [ ] `POST /auth/register` — email/password signup with email verification
 - [ ] `POST /auth/login` — returns JWT pair
@@ -83,7 +88,8 @@
 - [ ] Integration tests: login → access protected route → refresh → access again
 
 ### P1-2: Database Schema & Prisma Setup [AGENT-02]
-- [ ] Create Prisma schema matching CLAUDE.md section 4
+
+- [x] Create Prisma schema matching CLAUDE.md section 4
 - [ ] Run initial migration: `prisma migrate dev`
 - [ ] Seed script with test data (users, datasets, campaigns, submissions)
 - [ ] Prisma client generated and shared via `packages/db`
@@ -91,7 +97,9 @@
 - [ ] Index creation for common query patterns
 
 ### P1-3: Contributor Experience [AGENT-02 + AGENT-03]
+
 **API (AGENT-02):**
+
 - [ ] `POST /contributors/register` — contributor-specific onboarding
 - [ ] `POST /contributors/kyc` — Sumsub webhook handler for KYC results
 - [ ] `GET /contributors/tasks` — list available tasks matching skills/geo/language
@@ -101,6 +109,7 @@
 - [ ] `GET /contributors/profile` — view/edit profile, skills, languages, equipment
 
 **Frontend (AGENT-03):**
+
 - [ ] Contributor onboarding wizard (4 steps: account → profile → skills → KYC)
 - [ ] Task browser with filters (modality, language, pay rate, deadline)
 - [ ] Task detail page with instructions, examples, requirements
@@ -110,6 +119,7 @@
 - [ ] Payout request form (select method, enter amount, confirm)
 
 ### P1-4: Upload Service MVP [AGENT-04]
+
 - [ ] Go project setup in `services/upload/`
 - [ ] tusd server with S3 backend (MinIO for local dev)
 - [ ] Upload endpoint with authentication (JWT validation)
@@ -122,7 +132,9 @@
 - [ ] Unit tests + integration test with MinIO
 
 ### P1-5: Admin Review System [AGENT-02 + AGENT-03]
+
 **API (AGENT-02):**
+
 - [ ] `GET /admin/review-queue` — paginated, filterable (status, modality, campaign)
 - [ ] `GET /admin/review-queue/:submissionId` — full details + pre-signed media URL
 - [ ] `POST /admin/review/:submissionId/approve` — approve, trigger payment
@@ -130,6 +142,7 @@
 - [ ] `POST /admin/review/:submissionId/escalate` — escalate to senior reviewer
 
 **Frontend (AGENT-03):**
+
 - [ ] Review queue table with sorting, filtering, bulk actions
 - [ ] Review detail page with embedded media player (video/audio/image viewer)
 - [ ] Side-by-side view: task instructions vs submission
@@ -137,6 +150,7 @@
 - [ ] Performance metrics: reviews/day, approval rate, avg review time
 
 ### P1-6: Payment Integration [AGENT-07]
+
 - [ ] Stripe Connect Express account creation for contributors
 - [ ] Stripe Checkout for buyer dataset purchases
 - [ ] Escrow logic: hold payment until submission approved
@@ -149,7 +163,9 @@
 - [ ] Integration test: full cycle (buyer pays → contributor uploads → admin approves → payout)
 
 ### P1-7: Dataset Catalog MVP [AGENT-02 + AGENT-03]
+
 **API (AGENT-02):**
+
 - [ ] `GET /datasets` — search, filter (modality, category, language, quality, price range)
 - [ ] `GET /datasets/:id` — full details, sample count, quality stats
 - [ ] `GET /datasets/:id/samples` — pre-signed S3 URLs (max 5 samples)
@@ -158,6 +174,7 @@
 - [ ] OpenSearch indexing of dataset metadata for full-text search
 
 **Frontend (AGENT-03):**
+
 - [ ] Catalog browse page with faceted search (sidebar filters + search bar)
 - [ ] Dataset card component (modality icon, title, sample count, quality score, price)
 - [ ] Dataset detail page (description, metadata, sample previews, purchase button)
@@ -169,6 +186,7 @@
 ## PHASE 2: Automation & Scale (Weeks 13-24)
 
 ### P2-1: ML Quality Pipeline [AGENT-05]
+
 - [ ] Kafka consumer service in `services/ml-pipeline/`
 - [ ] Celery worker pool with Redis broker
 - [ ] Task: blur detection (Laplacian variance + CNN)
@@ -191,6 +209,7 @@
 - [ ] Benchmark: verify <5 min latency for 60-second video
 
 ### P2-2: PII Detection & Redaction [AGENT-05]
+
 - [ ] Visual PII: RetinaFace for faces → blur/pixelate redaction
 - [ ] Visual PII: YOLOv8 for license plates → blur redaction
 - [ ] Text PII: Presidio (regex + spaCy NER) on Whisper transcripts
@@ -201,6 +220,7 @@
 - [ ] PII status update in PostgreSQL: PENDING → CLEAN / DETECTED → REDACTED
 
 ### P2-3: Contributor Matching Service [AGENT-05]
+
 - [ ] Contributor skill embeddings (multi-task neural net on performance history + skills + test results)
 - [ ] Task requirement embeddings (specification encoding)
 - [ ] Cosine similarity matching with learned reweighting
@@ -213,6 +233,7 @@
 - [ ] Match scoring API: `POST /matching/rank` → ranked contributor list
 
 ### P2-4: Real-Time Analytics [AGENT-03]
+
 - [ ] Socket.io server with Redis adapter
 - [ ] Enterprise dashboard: project progress (live % complete, submission rate)
 - [ ] Contributor dashboard: live earnings counter
@@ -221,7 +242,9 @@
 - [ ] Real-time contributor activity heatmap (geographic)
 
 ### P2-5: Public API & SDKs [AGENT-02 + AGENT-08]
+
 **API (AGENT-02):**
+
 - [ ] OpenAPI 3.1 specification: complete, validated
 - [ ] Rate limiting: 100 req/min (starter), 1000 req/min (growth), unlimited (enterprise)
 - [ ] API key authentication for programmatic access
@@ -230,12 +253,14 @@
 - [ ] Webhook registration: `POST /webhooks/register` — notify on dataset ready, campaign complete
 
 **SDKs (AGENT-08):**
+
 - [ ] Python SDK: `dataforge` — search datasets, place orders, download, stream
 - [ ] Node SDK: `@dataforge/sdk` — mirror of Python SDK capabilities
 - [ ] SDK documentation with examples
 - [ ] SDK published to PyPI and npm (test packages initially)
 
 ### P2-6: Flutter Mobile App [AGENT-06]
+
 - [ ] Flutter project setup in `apps/mobile/`
 - [ ] Contributor onboarding flow (matches web)
 - [ ] Sumsub KYC SDK integration
@@ -263,6 +288,7 @@
 - [ ] Task browser with offline-cached task list
 
 ### P2-7: Dynamic Pricing Engine [AGENT-05]
+
 - [ ] Base rate regression model (historical costs, contributor rates, modality complexity)
 - [ ] Supply-demand adjustment (contributor availability, queue depth, seasonal patterns)
 - [ ] Quality tier premium calculator
@@ -276,6 +302,7 @@
 ## PHASE 3: Differentiation (Weeks 25-36)
 
 ### P3-1: Federated Learning [AGENT-05]
+
 - [ ] Flower framework integration
 - [ ] Privacy-preserving aggregation with secure aggregation protocol
 - [ ] Differential privacy implementation
@@ -285,6 +312,7 @@
 - [ ] Documentation and onboarding guide
 
 ### P3-2: Blockchain Provenance [AGENT-07]
+
 - [ ] Hyperledger Fabric network setup (permissioned)
 - [ ] Chaincode: consent recording (hash, timestamp, contributor ID, purposes)
 - [ ] Chaincode: rights transfer tracking
@@ -295,6 +323,7 @@
 - [ ] Alternative: Solidity on Polygon for lower infrastructure overhead
 
 ### P3-3: Collaboration Workspace [AGENT-03]
+
 - [ ] Operational transform editing (Yjs or Automerge)
 - [ ] Multi-user dataset spec editing with live cursors
 - [ ] Presence awareness (who's viewing what)
@@ -304,6 +333,7 @@
 - [ ] Slack/Jira/Notion integration via webhooks
 
 ### P3-4: Revenue Sharing System [AGENT-07]
+
 - [ ] Royalty calculation engine: track which items generated licensing revenue
 - [ ] Contributor portfolio dashboard: show all contributed items, licensing activity, royalty earnings
 - [ ] Revenue sharing formula: 10-20% of subsequent license fees per item
@@ -313,6 +343,7 @@
 - [ ] Smart contract automation (if blockchain deployed) for transparent royalty execution
 
 ### P3-5: Open-Source Tooling [AGENT-08]
+
 - [ ] `dataforge-convert`: Format conversion library (COCO ↔ YOLO ↔ Pascal VOC ↔ KITTI ↔ WebDataset ↔ HuggingFace)
 - [ ] `dataforge-quality`: Quality metric implementations (inter-annotator agreement, consistency, bias detection)
 - [ ] `dataforge-provenance`: Provenance schemas (JSON Schema + Protobuf) for consent, chain-of-custody, license
@@ -326,6 +357,7 @@
 ## PHASE 4: Enterprise Readiness (Weeks 37-48)
 
 ### P4-1: Security Hardening [AGENT-01]
+
 - [ ] Trivy container image scanning in CI
 - [ ] Snyk dependency vulnerability scanning
 - [ ] Automated dependency updates (Renovate or Dependabot)
@@ -335,6 +367,7 @@
 - [ ] Security documentation: threat model, SDLC security practices
 
 ### P4-2: Compliance Infrastructure [AGENT-07]
+
 - [ ] SOC 2 audit logging: comprehensive event capture
 - [ ] GDPR Article 30 records of processing activities
 - [ ] CCPA compliance program documentation
@@ -344,6 +377,7 @@
 - [ ] Cookie consent and privacy policy for web properties
 
 ### P4-3: Enterprise Features [AGENT-02 + AGENT-03]
+
 - [ ] Enterprise SSO (SAML/OIDC) — streamlined onboarding
 - [ ] Custom contract management UI
 - [ ] Dedicated support tiers with SLA tracking
@@ -352,6 +386,7 @@
 - [ ] Bulk order management and invoicing
 
 ### P4-4: Scale Preparation [AGENT-01]
+
 - [ ] Load testing to 10x current capacity (k6)
 - [ ] Disaster recovery validation (RDS failover, cross-region S3 replication)
 - [ ] Chaos engineering: pod kill, network partition, DB failover
@@ -362,6 +397,7 @@
 ---
 
 ## MVP SUCCESS CRITERIA (End of Phase 1)
+
 - [ ] End-to-end flow: enterprise specs campaign → contributors see tasks → upload data → QA review → approve → payment → enterprise downloads dataset
 - [ ] 5 pilot enterprise customers
 - [ ] 100 active contributors

@@ -1,0 +1,12 @@
+{
+  "name": "@dataforge/quality-metrics",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Quality metrics: inter-annotator agreement, bias detection, consistency scoring",
+  "license": "MIT",
+  "scripts": {
+    "build": "echo 'placeholder'",
+    "lint": "echo 'placeholder'",
+    "test": "echo 'placeholder'"
+  }
+}

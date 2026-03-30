@@ -1,0 +1,6 @@
+{
+  "name": "@dataforge/ml",
+  "version": "0.1.0",
+  "private": true,
+  "description": "ML model code — training, serving, evaluation"
+}

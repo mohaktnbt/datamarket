@@ -1,0 +1,418 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ──────────────────────────────────────────────
+// Core User System
+// ──────────────────────────────────────────────
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String?
+  role         Role      @default(CONTRIBUTOR)
+  kycStatus    KycStatus @default(PENDING)
+  ssoProvider  String?
+  ssoExternalId String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  contributorProfile ContributorProfile?
+  buyerProfile       BuyerProfile?
+  submissions        Submission[]
+  orders             Order[]
+  payouts            Payout[]
+  consentRecords     ConsentRecord[]
+
+  @@index([email])
+  @@index([role])
+}
+
+enum Role {
+  CONTRIBUTOR
+  BUYER
+  ADMIN
+  REVIEWER
+}
+
+enum KycStatus {
+  PENDING
+  BASIC
+  STANDARD
+  ENHANCED
+  EXPERT
+  REJECTED
+}
+
+model ContributorProfile {
+  id                String      @id @default(cuid())
+  userId            String      @unique
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payoutMethod      PayoutMethod
+  payoutDetails     Json
+  country           String
+  languages         String[]
+  skills            String[]
+  equipmentVerified Boolean     @default(false)
+  qualityTier       QualityTier @default(STANDARD)
+  lifetimeEarnings  Int         @default(0)
+  totalSubmissions  Int         @default(0)
+  acceptanceRate    Float       @default(0)
+  referralCode      String      @unique
+  referredBy        String?
+
+  @@index([country])
+  @@index([qualityTier])
+}
+
+enum PayoutMethod {
+  STRIPE
+  PAYPAL
+  WISE
+  VENMO
+  UPI
+  MPESA
+  LOCAL_BANK
+}
+
+enum QualityTier {
+  STANDARD
+  PREMIUM
+  EXPERT
+}
+
+model BuyerProfile {
+  id         String   @id @default(cuid())
+  userId     String   @unique
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company    String
+  planTier   PlanTier @default(STARTER)
+  apiKey     String   @unique @default(cuid())
+  ssoEnabled Boolean  @default(false)
+
+  @@index([company])
+}
+
+enum PlanTier {
+  STARTER
+  GROWTH
+  ENTERPRISE
+}
+
+// ──────────────────────────────────────────────
+// Dataset Catalog
+// ──────────────────────────────────────────────
+
+model Dataset {
+  id             String        @id @default(cuid())
+  title          String
+  description    String
+  modality       Modality
+  category       String
+  languages      String[]
+  qualityScore   Float?
+  status         DatasetStatus @default(DRAFT)
+  pricingModel   PricingModel
+  priceCents     Int?
+  pricePerMinute Int?
+  licenseType    LicenseType
+  sampleCount    Int           @default(0)
+  totalDuration  Int?
+  totalSizeBytes BigInt        @default(0)
+  createdBy      String
+  createdAt      DateTime      @default(now())
+
+  items     DatasetItem[]
+  orders    Order[]
+  campaigns Campaign[]
+
+  @@index([modality])
+  @@index([status])
+  @@index([category])
+}
+
+enum Modality {
+  TEXT
+  AUDIO
+  IMAGE
+  VIDEO
+  MULTIMODAL
+  SENSOR
+}
+
+enum DatasetStatus {
+  DRAFT
+  COLLECTING
+  REVIEWING
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PricingModel {
+  FLAT_FEE
+  PER_MINUTE
+  PER_SAMPLE
+  SUBSCRIPTION
+  CUSTOM
+}
+
+enum LicenseType {
+  STANDARD
+  PREMIUM
+  EXCLUSIVE
+  CUSTOM
+}
+
+model DatasetItem {
+  id              String     @id @default(cuid())
+  datasetId       String
+  dataset         Dataset    @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  s3Key           String
+  s3Bucket        String
+  fileType        String
+  durationSeconds Float?
+  resolution      String?
+  sizeBytes       BigInt
+  qualityScore    Float?
+  piiStatus       PiiStatus  @default(PENDING)
+  status          ItemStatus @default(PENDING)
+  metadataId      String?
+  createdAt       DateTime   @default(now())
+
+  submissions    Submission[]
+  consentRecords ConsentRecord[]
+
+  @@index([datasetId])
+  @@index([status])
+  @@index([piiStatus])
+}
+
+enum PiiStatus {
+  PENDING
+  CLEAN
+  DETECTED
+  REDACTED
+}
+
+enum ItemStatus {
+  PENDING
+  PROCESSING
+  QA_REVIEW
+  APPROVED
+  REJECTED
+}
+
+// ──────────────────────────────────────────────
+// Campaign System (Custom Collection)
+// ──────────────────────────────────────────────
+
+model Campaign {
+  id             String         @id @default(cuid())
+  datasetId      String
+  dataset        Dataset        @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  buyerId        String
+  title          String
+  description    String
+  specifications Json
+  targetVolume   Int
+  currentVolume  Int            @default(0)
+  qualityTier    QualityTier
+  urgency        Urgency        @default(STANDARD)
+  estimatedCost  Int
+  actualCost     Int            @default(0)
+  deadline       DateTime?
+  status         CampaignStatus @default(DRAFT)
+  createdAt      DateTime       @default(now())
+
+  tasks Task[]
+
+  @@index([buyerId])
+  @@index([status])
+}
+
+enum Urgency {
+  STANDARD
+  EXPRESS
+  CRITICAL
+}
+
+enum CampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+model Task {
+  id                 String     @id @default(cuid())
+  campaignId         String
+  campaign           Campaign   @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  title              String
+  instructions       String
+  paymentCents       Int
+  requiredSkills     String[]
+  requiredEquipment  String[]
+  targetGeo          String[]
+  targetLanguages    String[]
+  maxSubmissions     Int
+  currentSubmissions Int        @default(0)
+  status             TaskStatus @default(OPEN)
+
+  submissions Submission[]
+
+  @@index([campaignId])
+  @@index([status])
+}
+
+enum TaskStatus {
+  OPEN
+  FILLED
+  IN_REVIEW
+  COMPLETED
+  CANCELLED
+}
+
+// ──────────────────────────────────────────────
+// Submissions and Review
+// ──────────────────────────────────────────────
+
+model Submission {
+  id                String        @id @default(cuid())
+  contributorId     String
+  contributor       User          @relation(fields: [contributorId], references: [id])
+  taskId            String?
+  task              Task?         @relation(fields: [taskId], references: [id])
+  datasetItemId     String?
+  datasetItem       DatasetItem?  @relation(fields: [datasetItemId], references: [id])
+  s3Key             String
+  reviewStatus      ReviewStatus  @default(PENDING)
+  reviewerNotes     String?
+  reviewerId        String?
+  autoQualityScore  Float?
+  humanQualityScore Float?
+  paymentStatus     PaymentStatus @default(UNPAID)
+  paymentAmount     Int
+  submittedAt       DateTime      @default(now())
+  reviewedAt        DateTime?
+
+  @@index([contributorId])
+  @@index([reviewStatus])
+  @@index([paymentStatus])
+}
+
+enum ReviewStatus {
+  PENDING
+  AUTO_APPROVED
+  AUTO_REJECTED
+  HUMAN_REVIEW
+  APPROVED
+  REJECTED
+  APPEALED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PROCESSING
+  PAID
+  FAILED
+}
+
+// ──────────────────────────────────────────────
+// Consent and Provenance
+// ──────────────────────────────────────────────
+
+model ConsentRecord {
+  id              String      @id @default(cuid())
+  contributorId   String
+  contributor     User        @relation(fields: [contributorId], references: [id])
+  datasetItemId   String
+  datasetItem     DatasetItem @relation(fields: [datasetItemId], references: [id])
+  consentVersion  String
+  purposes        String[]
+  restrictions    String[]
+  licenseType     String
+  grantedAt       DateTime    @default(now())
+  revokedAt       DateTime?
+  blockchainHash  String?
+  expiresAt       DateTime?
+
+  @@index([contributorId])
+  @@index([datasetItemId])
+}
+
+// ──────────────────────────────────────────────
+// Financial
+// ──────────────────────────────────────────────
+
+model Order {
+  id              String      @id @default(cuid())
+  buyerId         String
+  buyer           User        @relation(fields: [buyerId], references: [id])
+  datasetId       String
+  dataset         Dataset     @relation(fields: [datasetId], references: [id])
+  totalCents      Int
+  stripePaymentId String?
+  status          OrderStatus @default(PENDING)
+  createdAt       DateTime    @default(now())
+
+  @@index([buyerId])
+  @@index([status])
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  DELIVERED
+  REFUNDED
+  CANCELLED
+}
+
+model Payout {
+  id            String       @id @default(cuid())
+  contributorId String
+  contributor   User         @relation(fields: [contributorId], references: [id])
+  amountCents   Int
+  method        PayoutMethod
+  externalId    String?
+  status        PayoutStatus @default(PENDING)
+  type          PayoutType   @default(TASK_PAYMENT)
+  initiatedAt   DateTime     @default(now())
+  completedAt   DateTime?
+
+  @@index([contributorId])
+  @@index([status])
+}
+
+enum PayoutStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum PayoutType {
+  TASK_PAYMENT
+  ROYALTY
+  BONUS
+  REFERRAL
+}
+
+model RoyaltyLedger {
+  id            String       @id @default(cuid())
+  contributorId String
+  datasetItemId String
+  orderId       String
+  royaltyCents  Int
+  status        PayoutStatus @default(PENDING)
+  calculatedAt  DateTime     @default(now())
+  paidAt        DateTime?
+
+  @@index([contributorId])
+  @@index([orderId])
+}
