@@ -1,0 +1,12 @@
+{
+  "name": "@dataforge/provenance-schemas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Provenance schemas: consent, chain-of-custody, license verification",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "echo 'placeholder'",
+    "lint": "echo 'placeholder'",
+    "test": "echo 'placeholder'"
+  }
+}

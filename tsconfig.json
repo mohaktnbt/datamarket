@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": false,
+    "incremental": true,
+    "paths": {
+      "@dataforge/shared": ["./packages/shared/src"],
+      "@dataforge/shared/*": ["./packages/shared/src/*"],
+      "@dataforge/db": ["./packages/db/src"],
+      "@dataforge/db/*": ["./packages/db/src/*"],
+      "@dataforge/ui": ["./packages/ui/src"],
+      "@dataforge/ui/*": ["./packages/ui/src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", ".next", ".turbo"]
+}
